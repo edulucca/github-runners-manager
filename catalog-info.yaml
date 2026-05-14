@@ -1,0 +1,45 @@
+# catalog-info.yaml — repo myorg/github-runners-manager
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: asyncapi-deploy-events
+  title: Eventos de Pipeline (CI/CD)
+  description: Tópico Kafka onde os runners publicam o status dos deploys (Sucesso/Falha).
+  tags: [kafka, cicd]
+  annotations:
+    github.com/project-slug: myorg/github-runners-manager
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: group:squad-devex
+  system: devex-platform
+  definition: |
+    asyncapi: 2.0.0
+    info:
+      title: Deploy Events
+      version: 1.0.0
+    channels:
+      pipeline.status:
+        publish:
+          message:
+            payload:
+              type: string
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: github-runners-manager
+  title: GitHub Actions Runners
+  description: Cluster de máquinas efêmeras que executam as pipelines de CI.
+  tags: [infrastructure, cicd, worker]
+  annotations:
+    github.com/project-slug: myorg/github-runners-manager
+spec:
+  type: service
+  lifecycle: production
+  owner: group:squad-devex
+  system: devex-platform
+  providesApis:
+    - asyncapi-deploy-events
